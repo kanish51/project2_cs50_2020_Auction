@@ -1,0 +1,61 @@
+{% load static %}
+{% url 'create_listing' as varcreatelisting %}
+{% url 'login' as varlogin %}
+{% url 'register' as varregister %}
+{% url 'watchlist' as varwatchlist %}
+{% url 'categories' as varcategories %}
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <title>{% block title %}Auctions{% endblock %}</title>
+        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css" integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous">
+        <link href="{% static 'auctions/styles.css' %}" rel="stylesheet">
+    </head>
+    <body>
+        <h1>Auctions</h1>
+        <div>
+            {% if user.is_authenticated %}
+                Signed in as <strong>{{ user.username }}</strong>.
+            {% else %}
+                Not signed in.
+            {% endif %}
+        </div>
+        <ul class="nav">
+            <li class="nav-item">
+                <a class="nav-link" href="{% url 'index' %}">Active Listings</a>
+            </li>
+            {%if request.path != varcategories %}
+                <li class="nav-item">
+                    <a class="nav-link" href="{{varcategories}}">Categories</a>
+                </li>
+            {% endif %}
+            {% if user.is_authenticated %}
+                {%if request.path != varcreatelisting %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{varcreatelisting}}">Create Listing</a>
+                    </li>
+                {% endif %}
+                {%if request.path != varwatchlist %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{varwatchlist}}">Watchlist</a>
+                    </li>
+                {% endif %}
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'logout' %}">Log Out</a>
+                </li>
+            {% else %}
+                {% if varlogin not in request.path and varregister not in request.path %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{varlogin}}">Log In</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{varregister}}">Register</a>
+                    </li>
+                {% endif%}
+            {% endif %}
+        </ul>
+        <hr>
+        {% block body %}
+        {% endblock %}
+    </body>
+</html>

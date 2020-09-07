@@ -1,0 +1,10 @@
+{% extends "auctions/layout.html" %}
+
+{% block body %}
+	<h2>Select a category: </h2>
+	<ul>
+		{% for category in categorylist %}
+			<li><a href="{{varcategories}}?q={{category.categoryName}}">{{category.categoryName}}</a></li>
+		{% endfor %}
+	</ul>
+{% endblock %}

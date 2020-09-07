@@ -1,0 +1,36 @@
+{% extends "auctions/layout.html" %}
+{% load tz %}
+
+{% block body %}
+	{% if varwatchlist in request.path %}
+		<h2>Watchlist</h2>
+	{% elif catname != None %}
+    	<h2>{{catname}}</h2>
+    {% else %}
+    	<h2>Active Listings</h2>
+    {% endif %}
+
+    {% for item in auctionlist %}
+    	{% if item.active == True or varwatchlist in request.path %}
+    		<div class="card shadow">
+        		<div class="row">
+            		<div class="col-12 col-sm-12 col-md-12 col-lg-4 col-xl-3" >
+                		<a href="{% url 'view_listing' item.id %}"><img src="{{item.image}}" class="img-fluid abc" style="display:block;margin: 2px auto 2px;" alt="Product Image"></a>
+            		</div>
+            		<div class="col-12 col-sm-12 col-md-12 col-lg-8 col-xl-9">
+                		<div class="card-block px-2">
+                    		<h4 class="card-title"><a class="producttitle" href="{% url 'view_listing' item.id %}">{{item.productName}}</a></h4>
+                    		<p class="card-text"><a class="productdesc" href="{% url 'view_listing' item.id %}">{{item.description}}</a></p>
+                    		<h4 class="card-title"><span>Price: &#x20B9</span>{{item.price}}</h4>
+                    		<h6 class="card-title"><span>Created </span>{{item.datetime|timezone:"Asia/Kolkata"}}</h6>
+                    		<h6 class="card-title"><span>Category: </span>{{item.category.categoryName}}</h6>
+                    		<h6 class="card-title"><span>By </span>{{item.listerName.username}}</h6>
+                		</div>
+            		</div>
+        		</div>
+    		</div>
+    	{% endif %}
+    {% empty %}
+    	<h4>No results.</h4>
+    {% endfor %}
+{% endblock %}

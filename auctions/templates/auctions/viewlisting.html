@@ -1,0 +1,69 @@
+{% extends "auctions/layout.html" %}
+{% load tz %}
+
+{% block body %}
+	{% if product.active == False %}
+		<h2 style="font-weight: bold">Closed and Won by {{product.wonby.username}}</h2>
+	{% endif %}
+	<h2>{{product.productName}}</h2>
+	<form action="{% url 'view_listing' product.id %}" method="post">
+		{% csrf_token %}
+		{% if user.is_authenticated and user.username != product.listerName.username and product.active == True %}
+			<button class="btn btn-primary" type="submit" name="watchlist">{{watchlistdata}}</button>
+		{% endif %}
+	</form>
+	<form action="{% url 'view_listing' product.id %}" method="post">
+		{% csrf_token %}
+		{% if user.is_authenticated and user.username == product.listerName.username and product.active == True %}
+			<button class="btn btn-primary" type="submit" name="close">Close Listing</button>
+		{% endif %}
+	</form>
+	<div>
+		<img src="{{product.image}}" class="img-fluid" style="margin: 5px auto 5px;display:block;height: 22vw">
+	</div>
+	<div>
+		<h4 style="font-weight: bold;"><span>Price: &#x20B9</span>{{product.price}}</h4>
+		<p><span>Created </span>{{product.datetime|timezone:"Asia/Kolkata"}}<br><span>By </span>{{product.listerName.username}}<br><span>Category: </span>{{product.category.categoryName}}</p>
+        <p>Description:<br>{{product.description}}</p>
+	</div>
+	<h4 style="font-weight: bold;">Bids:</h4>
+	<div>
+		<h6>Current highest bid: <span>&#x20B9 {{highestbid}}</span></h6>
+		{% if user.is_authenticated and user.username != product.listerName.username and product.active == True %}
+			<p style="color: red">{{placebiderror}}</p>
+			<form action="{% url 'view_listing' product.id %}" method="post">
+				{% csrf_token %}
+				{{placebidform}}
+				<button class="btn btn-primary" type="submit" name="placebidform">Place Bid</button>
+			</form>
+			<br>
+		{% endif %}
+		{% for bid in bids reversed %}
+			<div style="border-top: 1px solid black;">
+				<h5><span>&#x20B9 </span>{{bid.bidValue}}</h5>
+				<p><span>By </span>{{bid.user.username}}</p>
+			</div>
+		{% empty %}
+			<h6>No bids.</h6>
+		{% endfor %}
+	</div>
+	<h4 style="font-weight: bold;">Comments:</h4>
+	<div>
+		{% if user.is_authenticated and product.active == True %}
+			<form action="{% url 'view_listing' product.id %}" method="post">
+				{% csrf_token %}
+				{{placecommentform}}
+				<button class="btn btn-primary" type="submit" name="placecommentform">Place Comment</button>
+			</form>
+			<br>
+		{% endif %}
+		{% for com in comments reversed %}
+			<div style="border-top: 1px solid black;">
+				<h5 style="word-wrap: break-word;">{{com.comment}}</h5>
+				<p><span>By </span>{{com.user.username}}</p>
+			</div>
+		{% empty %}
+			<h6>No comments.</h6>
+		{% endfor %}
+	</div>
+{% endblock %}
